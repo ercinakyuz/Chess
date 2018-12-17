@@ -155,7 +155,11 @@ namespace ChessGame.Business
                 var otherKing = GetKing(otherPlayerType);
                 if (!isGameOverControl)
                 {
-                    if (!IsKingInDanger(currentKing))
+                    if (IsKingInDanger(currentKing))
+                    {
+                        UndoMove();
+                    }
+                    else
                     {
                         SetKingsDangerZones(otherPlayerType);
                         bool isGameOver = IsGameOver(out gameOverType);
@@ -163,14 +167,10 @@ namespace ChessGame.Business
                         {
                             return true;
                         }
-                        if (!otherKing.IsChecked)
-                        {
-                            SwitchPlayer();
-                            isNextTurn = true;
-                            SaveBoard();
-                        }
-                    }
 
+                        isNextTurn = true;
+                        GetNextTurn();
+                    }
                 }
                 else
                 {
@@ -182,6 +182,11 @@ namespace ChessGame.Business
             return isNextTurn;
         }
 
+        private void GetNextTurn()
+        {
+            SwitchPlayer();
+            SaveBoard();
+        }
         private void SaveBoard()
         {
             BoardSnapshot = Board.Clone();
@@ -305,7 +310,7 @@ namespace ChessGame.Business
         private bool ValidateMove(BasePiece piece, Move move, bool isDangerZonesControl = false, bool isGameOverControl = false)
         {
             bool isValidMove = false;
-            if (isGameOverControl || piece?.Ownership == CurrentPlayer.Type)
+            if (isDangerZonesControl || isGameOverControl || piece?.Ownership == CurrentPlayer.Type)
             {
                 bool isPieceNotMoved = move.From.X == move.To.X && move.From.Y == move.To.Y;
                 isValidMove = !isPieceNotMoved && piece.IsValidMove(move, Board, isDangerZonesControl);
