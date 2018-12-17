@@ -5,7 +5,7 @@ namespace ChessGame.Business.Piece
 {
     public class Bishop : BasePiece
     {
-        public override bool IsValidMove(Move move, Dictionary<Block, BasePiece> board, bool isDangerZonesControl = false)
+        public override bool IsValidMove(Move move, Dictionary<Block, BasePiece> board, bool isDangerZonesControl = false, bool isGameOverControl = false)
         {
             bool isValidMove = base.IsValidMove(move, board, isDangerZonesControl) && move.From.X != move.To.X && move.From.Y != move.To.Y;
             if (isValidMove)

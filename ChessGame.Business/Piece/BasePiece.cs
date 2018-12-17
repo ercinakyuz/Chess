@@ -9,7 +9,7 @@ namespace ChessGame.Business.Piece
         public PlayerType Ownership { get; set; }
         public bool IsFirstMove { get; set; }
 
-        public virtual bool IsValidMove(Move move, Dictionary<Block, BasePiece> board, bool isDangerZonesControl = false)
+        public virtual bool IsValidMove(Move move, Dictionary<Block, BasePiece> board, bool isDangerZonesControl = false, bool isGameOverControl = false)
         {
             return isDangerZonesControl || board[move.To]?.Ownership != Ownership;
         }

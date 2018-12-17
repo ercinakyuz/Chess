@@ -23,7 +23,7 @@ namespace ChessGame.Business.Piece
             {new RookLocationKey{OwnerShip = PlayerType.White,XDirection = -1 }, new Block{ X = 1, Y = 1 } },
         };
 
-        public override bool IsValidMove(Move move, Dictionary<Block, BasePiece> board, bool isDangerZonesControl = false)
+        public override bool IsValidMove(Move move, Dictionary<Block, BasePiece> board, bool isDangerZonesControl = false, bool isGameOverControl = false)
         {
             int xDist = move.To.X - move.From.X;
             int yDist = move.To.Y - move.From.Y;

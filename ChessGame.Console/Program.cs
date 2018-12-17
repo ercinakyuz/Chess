@@ -1,5 +1,6 @@
 ﻿using System;
 using ChessGame.Business;
+using ChessGame.Common;
 
 namespace ChessGame.Console
 {
@@ -44,8 +45,15 @@ namespace ChessGame.Console
                 var to = new Block { X = Convert.ToInt16(ToArr[0]), Y = Convert.ToInt16(ToArr[1]) };
 
                 var piece = _game.Board[from];
-                _game.Play(piece, to);
+                _game.Play(piece, to, out var gameOverType);
+                if (gameOverType != GameOverType.None)
+                {
+                    System.Console.WriteLine(gameOverType.GetDescription());
+                    break;
+                }
             }
+
+            System.Console.ReadKey();
         }
 
         static void StopTheGame(Game game)

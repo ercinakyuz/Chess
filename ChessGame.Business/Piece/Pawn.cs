@@ -38,13 +38,14 @@ namespace ChessGame.Business.Piece
             return isUpgraded;
         }
 
-        public override bool IsValidMove(Move move, Dictionary<Block, BasePiece> board, bool isDangerZonesControl = false)
+        public override bool IsValidMove(Move move, Dictionary<Block, BasePiece> board, bool isDangerZonesControl = false, bool isGameOverControl = false)
         {
             IsKillableMove = false;
             bool isValidMove = false;
             int xDist = move.To.X - move.From.X;
             int yDist = move.To.Y - move.From.Y;
             int xAbsDist = Math.Abs(xDist);
+            int yAbsDist = Math.Abs(yDist);
             var yDirection = Ownership == PlayerType.White ? 1 : -1;
 
             if (xAbsDist == 1 && yDist == yDirection)
@@ -58,22 +59,25 @@ namespace ChessGame.Business.Piece
                 {
                     var backLocation = new Block { X = move.To.X, Y = move.To.Y - yDirection };
                     var backLocationPiece = board[backLocation];
-                    if (backLocationPiece == AvailablePawnForPassingToKill)
+                    if (Equals(backLocationPiece, AvailablePawnForPassingToKill))
                     {
                         isValidMove = true;
                         if (!isDangerZonesControl)
                         {
                             board[backLocation] = null;
-                            Console.WriteLine($"{Ownership} pawn killed {backLocationPiece.Ownership} pawn when passing!");
+                            if (!isGameOverControl)
+                            {
+                                Console.WriteLine($"{Ownership} pawn killed {backLocationPiece.Ownership} pawn when passing!");
+                            }
                         }
                     }
                 }
             }
             else if (xDist == 0 && DistanceRangeDictionary[new DistanceRangeKey { IsFirstMove = IsFirstMove, OwnerShip = Ownership }].Contains(yDist))
             {
-                for (int i = yDirection; i <= yDist; i++)
+                for (int i = 1; i <= yAbsDist; i++)
                 {
-                    var pieceOnRotation = board[new Block { X = move.To.X, Y = move.To.Y + i }];
+                    var pieceOnRotation = board[new Block { X = move.To.X, Y = move.From.Y + i * yDirection }];
                     if (pieceOnRotation != null)
                     {
                         return false;

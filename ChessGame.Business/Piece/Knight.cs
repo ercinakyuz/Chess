@@ -5,7 +5,7 @@ namespace ChessGame.Business.Piece
 {
     public class Knight : BasePiece
     {
-        public override bool IsValidMove(Move move, Dictionary<Block, BasePiece> board, bool isDangerZonesControl = false)
+        public override bool IsValidMove(Move move, Dictionary<Block, BasePiece> board, bool isDangerZonesControl = false, bool isGameOverControl = false)
         {
             int xDist = move.To.X - move.From.X;
             int yDist = move.To.Y - move.From.Y;
