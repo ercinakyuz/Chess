@@ -22,5 +22,9 @@
                 return (From.GetHashCode() * 397) ^ To.GetHashCode();
             }
         }
+        public override string ToString()
+        {
+            return $"{From} : {To}";
+        }
     }
 }

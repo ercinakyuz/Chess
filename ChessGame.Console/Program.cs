@@ -7,7 +7,7 @@ namespace ChessGame.Console
     class Program
     {
         private static Game _game;
-        private static Game _snapShot;
+
         static void Main(string[] args)
         {
             //TestValidMoves();
@@ -17,40 +17,36 @@ namespace ChessGame.Console
         static void StartNewGame()
         {
             _game = new Game();
-            _snapShot = _game;
             bool isGameActive = true;
-            bool isNextTurn = true;
             System.Console.WriteLine("Game started!");
 
             while (isGameActive)
             {
-                //if (isNextTurn)
-                //{
-                //    _snapShot = _game;
-                //}
-                //else
-                //{
-                //    _game = _snapShot;
-                //}
-
-                System.Console.WriteLine($"Turn {_game.TurnNumber}, {_game.CurrentPlayer.Type}'s Turn!");
-                System.Console.WriteLine("Select your piece location(x,y): ");
-                string fromStr = System.Console.ReadLine();
-                var fromArr = fromStr.Split(",");
-                var from = new Block { X = Convert.ToInt16(fromArr[0]), Y = Convert.ToInt16(fromArr[1]) };
-
-                System.Console.WriteLine("Select your move to location(x,y): ");
-                string ToStr = System.Console.ReadLine();
-                var ToArr = ToStr.Split(",");
-                var to = new Block { X = Convert.ToInt16(ToArr[0]), Y = Convert.ToInt16(ToArr[1]) };
-
-                var piece = _game.Board[from];
-                _game.Play(piece, to, out var gameOverType);
-                if (gameOverType != GameOverType.None)
+                try
                 {
-                    System.Console.WriteLine(gameOverType.GetDescription());
-                    break;
+                    System.Console.WriteLine($"Turn {_game.TurnNumber}, {_game.CurrentPlayer.Type}'s Turn!");
+                    System.Console.WriteLine("Select your piece location(x,y): ");
+                    string fromStr = System.Console.ReadLine();
+                    var fromArr = fromStr.Split(",");
+                    var from = new Block { X = Convert.ToInt16(fromArr[0]), Y = Convert.ToInt16(fromArr[1]) };
+
+                    System.Console.WriteLine("Select your move to location(x,y): ");
+                    string ToStr = System.Console.ReadLine();
+                    var ToArr = ToStr.Split(",");
+                    var to = new Block { X = Convert.ToInt16(ToArr[0]), Y = Convert.ToInt16(ToArr[1]) };
+
+                    _game.Play(new Move { From = from, To = to }, out var gameOverType);
+                    if (gameOverType != GameOverType.None)
+                    {
+                        System.Console.WriteLine(gameOverType.GetDescription());
+                        break;
+                    }
                 }
+                catch (Exception e)
+                {
+                    System.Console.WriteLine(e.Message);
+                }
+
             }
 
             System.Console.ReadKey();
@@ -68,14 +64,14 @@ namespace ChessGame.Console
         static void TestValidMoves()
         {
             _game = new Game();
-            foreach (var piece in _game.Board.Values)
+            foreach (var piece in _game.Board.Current.Values)
             {
                 if (piece != null)
                 {
-                    var from = _game.GetPieceLocation(piece);
-                    foreach (var to in _game.Board.Keys)
+                    var from = _game.Board.FindPieceLocation(piece);
+                    foreach (var to in _game.Board.Current.Keys)
                     {
-                        bool isValidMove = piece.IsValidMove(new Move { From = from, To = to }, _game.Board);
+                        bool isValidMove = piece.IsValidMove(new Move { From = from, To = to }, _game.Board.Current);
                         System.Console.WriteLine($"{piece.Ownership} {piece.GetType().Name} at {from.X},{from.Y} to {to.X},{to.Y} is {isValidMove}.");
                     }
                     System.Console.WriteLine("------------------------------------------------------------------------------------------------------------------");

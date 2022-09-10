@@ -3,167 +3,51 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using ChessGame.Business.Piece;
-using ChessGame.Common;
 
 namespace ChessGame.Business
 {
     public class Game
     {
-        public readonly Player WhitePlayer;
-        public readonly Player BlackPlayer;
-        public Player CurrentPlayer;
-        public int TurnNumber;
-        public Dictionary<Block, BasePiece> BoardSnapshot { get; set; }
-        public Dictionary<Block, BasePiece> Board { get; set; }
+        public Player WhitePlayer { get; }
+        public Player BlackPlayer { get; }
+        public Player CurrentPlayer { get; private set; }
+        public int TurnNumber { get; private set; }
+        public Board Board { get; }
 
         public Game()
         {
-            InitBoard();
-            SaveBoard();
+            Board = Board.Init();
             WhitePlayer = new Player(PlayerType.White);
             BlackPlayer = new Player(PlayerType.Black);
             CurrentPlayer = WhitePlayer;
             TurnNumber = 1;
         }
-
-        private void InitBoard()
-        {
-            Board = new Dictionary<Block, BasePiece>
-            {
-                { new Block { X = 1, Y = 1 }, new Rook { Id=Guid.NewGuid(), Ownership = PlayerType.White, IsFirstMove = true } },
-                { new Block { X = 2, Y = 1 }, new Knight { Id=Guid.NewGuid(), Ownership = PlayerType.White } },
-                { new Block { X = 3, Y = 1 }, new Bishop {Id=Guid.NewGuid(), Ownership = PlayerType.White } },
-                { new Block { X = 4, Y = 1 }, new Queen { Id=Guid.NewGuid(), Ownership = PlayerType.White } },
-                { new Block { X = 5, Y = 1 }, new King { Id=Guid.NewGuid(), Ownership = PlayerType.White, IsFirstMove = true, IsChecked = false} },
-                { new Block { X = 6, Y = 1 }, new Bishop { Id=Guid.NewGuid(), Ownership = PlayerType.White } },
-                { new Block { X = 7, Y = 1 }, new Knight { Id=Guid.NewGuid(), Ownership = PlayerType.White } },
-                { new Block { X = 8, Y = 1 }, new Rook { Id=Guid.NewGuid(), Ownership = PlayerType.White, IsFirstMove = true } },
-
-                { new Block { X = 1, Y = 2 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.White, IsFirstMove = true } },
-                { new Block { X = 2, Y = 2 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.White, IsFirstMove = true } },
-                { new Block { X = 3, Y = 2 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.White, IsFirstMove = true } },
-                { new Block { X = 4, Y = 2 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.White, IsFirstMove = true } },
-                { new Block { X = 5, Y = 2 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.White, IsFirstMove = true } },
-                { new Block { X = 6, Y = 2 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.White, IsFirstMove = true } },
-                { new Block { X = 7, Y = 2 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.White, IsFirstMove = true } },
-                { new Block { X = 8, Y = 2 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.White, IsFirstMove = true } },
-
-
-                //{ new Block { X = 1, Y = 2 }, null },
-                //{ new Block { X = 2, Y = 2 }, null },
-                //{ new Block { X = 3, Y = 2 }, null },
-                //{ new Block { X = 4, Y = 2 }, null },
-                //{ new Block { X = 5, Y = 2 }, null },
-                //{ new Block { X = 6, Y = 2 }, null },
-                //{ new Block { X = 7, Y = 2 }, null },
-                //{ new Block { X = 8, Y = 2 }, null },
-
-                { new Block { X = 1, Y = 3 }, null },
-                { new Block { X = 2, Y = 3 }, null },
-                { new Block { X = 3, Y = 3 }, null },
-                { new Block { X = 4, Y = 3 }, null },
-                { new Block { X = 5, Y = 3 }, null },
-                { new Block { X = 6, Y = 3 }, null },
-                { new Block { X = 7, Y = 3 }, null },
-                { new Block { X = 8, Y = 3 }, null },
-
-                { new Block { X = 1, Y = 4 }, null },
-                { new Block { X = 2, Y = 4 }, null },
-                { new Block { X = 3, Y = 4 }, null },
-                { new Block { X = 4, Y = 4 }, null },
-                { new Block { X = 5, Y = 4 }, null },
-                { new Block { X = 6, Y = 4 }, null },
-                { new Block { X = 7, Y = 4 }, null },
-                { new Block { X = 8, Y = 4 }, null },
-
-                { new Block { X = 1, Y = 5 }, null },
-                { new Block { X = 2, Y = 5 }, null },
-                { new Block { X = 3, Y = 5 }, null },
-                { new Block { X = 4, Y = 5 }, null },
-                { new Block { X = 5, Y = 5 }, null },
-                { new Block { X = 6, Y = 5 }, null },
-                { new Block { X = 7, Y = 5 }, null },
-                { new Block { X = 8, Y = 5 }, null },
-
-                { new Block { X = 1, Y = 6 }, null },
-                { new Block { X = 2, Y = 6 }, null },
-                { new Block { X = 3, Y = 6 }, null },
-                { new Block { X = 4, Y = 6 }, null },
-                { new Block { X = 5, Y = 6 }, null },
-                { new Block { X = 6, Y = 6 }, null },
-                { new Block { X = 7, Y = 6 }, null },
-                { new Block { X = 8, Y = 6 }, null },
-
-                //{ new Block { X = 1, Y = 7 }, null },
-                //{ new Block { X = 2, Y = 7 }, null },
-                //{ new Block { X = 3, Y = 7 }, null },
-                //{ new Block { X = 4, Y = 7 }, null },
-                //{ new Block { X = 5, Y = 7 }, null },
-                //{ new Block { X = 6, Y = 7 }, null },
-                //{ new Block { X = 7, Y = 7 }, null },
-                //{ new Block { X = 8, Y = 7 }, null },
-
-                { new Block { X = 1, Y = 7 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.Black, IsFirstMove = true } },
-                { new Block { X = 2, Y = 7 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.Black, IsFirstMove = true } },
-                { new Block { X = 3, Y = 7 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.Black, IsFirstMove = true } },
-                { new Block { X = 4, Y = 7 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.Black, IsFirstMove = true } },
-                { new Block { X = 5, Y = 7 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.Black, IsFirstMove = true } },
-                { new Block { X = 6, Y = 7 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.Black, IsFirstMove = true } },
-                { new Block { X = 7, Y = 7 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.Black, IsFirstMove = true } },
-                { new Block { X = 8, Y = 7 }, new Pawn { Id=Guid.NewGuid(), Ownership = PlayerType.Black, IsFirstMove = true } },
-
-                { new Block { X = 1, Y = 8}, new Rook { Id=Guid.NewGuid(), Ownership = PlayerType.Black, IsFirstMove = true } },
-                { new Block { X = 2, Y = 8}, new Knight { Id=Guid.NewGuid(), Ownership = PlayerType.Black } },
-                { new Block { X = 3, Y = 8}, new Bishop { Id=Guid.NewGuid(), Ownership = PlayerType.Black } },
-                { new Block { X = 4, Y = 8}, new Queen { Id=Guid.NewGuid(), Ownership = PlayerType.Black } },
-                { new Block { X = 5, Y = 8}, new King { Id=Guid.NewGuid(), Ownership = PlayerType.Black, IsFirstMove = true, IsChecked = false } },
-                { new Block { X = 6, Y = 8}, new Bishop { Id=Guid.NewGuid(), Ownership = PlayerType.Black } },
-                { new Block { X = 7, Y = 8}, new Knight { Id=Guid.NewGuid(), Ownership = PlayerType.Black } },
-                { new Block { X = 8, Y = 8}, new Rook { Id=Guid.NewGuid(), Ownership = PlayerType.Black, IsFirstMove = true } },
-
-            };
-
-        }
-        public bool Play(BasePiece piece, Block to, out GameOverType gameOverType, bool isGameOverControl = false)
+        public bool Play(Move move, out GameOverType gameOverType, bool isGameOverControl = false)
         {
             bool isNextTurn = false;
             gameOverType = GameOverType.None;
-            var move = new Move
-            {
-                From = GetPieceLocation(piece),
-                To = to,
-            };
-            //var controlMove = new Move
-            //{
-            //    To = new Block { X = 8, Y = 5 },
-            //    From = new Block { X = 8, Y = 7 }
-            //};
-            //if (move.Equals(controlMove))
-            //{
-
-            //}
+            var piece = Board.FindPiece(move.From) ?? throw new ArgumentException($"Piece not found at {move.From}");
             var isValidMove = ValidateMove(piece, move, false, isGameOverControl);
             if (isValidMove)
             {
                 piece.IsFirstMove = false;
-                CheckKills(move.To, isGameOverControl);
-                UpdateBoard(move);
-                UpgradePawn(piece, to);
-                var currentKing = GetKing(CurrentPlayer.Type);
+                AnyPieceKilled(move.To, isGameOverControl);
+                Board.Update(move);
+                UpgradePawn(piece, move.To);
+                var currentKing = Board.GetKing(CurrentPlayer.Type);
 
                 var otherPlayerType = GetOtherPlayerType(CurrentPlayer.Type);
-                var otherKing = GetKing(otherPlayerType);
+                var otherKing = Board.GetKing(otherPlayerType);
                 if (!isGameOverControl)
                 {
                     if (IsKingInDanger(currentKing))
                     {
-                        UndoMove();
+                        Board.Undo();
                     }
                     else
                     {
                         SetKingsDangerZones(otherPlayerType);
-                        bool isGameOver = IsGameOver(out gameOverType);
-                        if (isGameOver)
+                        if (IsOver(move, out gameOverType))
                         {
                             return true;
                         }
@@ -175,7 +59,7 @@ namespace ChessGame.Business
                 else
                 {
                     isNextTurn = !IsKingInDanger(otherKing, true);
-                    UndoMove();
+                    Board.Undo();
                 }
             }
 
@@ -185,16 +69,7 @@ namespace ChessGame.Business
         private void GetNextTurn()
         {
             SwitchPlayer();
-            SaveBoard();
-        }
-        private void SaveBoard()
-        {
-            BoardSnapshot = Board.Clone();
-        }
-
-        private void UndoMove()
-        {
-            Board = BoardSnapshot.Clone();
+            Board.TakeSnapshot();
         }
 
         private bool IsKingInDanger(King king, bool isGameOverControl = false)
@@ -203,7 +78,7 @@ namespace ChessGame.Business
             if (king.IsChecked)
             {
                 SetKingsDangerZones(king.Ownership, isGameOverControl);
-                if (king.DangerZones.Contains(GetPieceLocation(king)))
+                if (king.DangerZones.Contains(Board.FindPieceLocation(king)))
                 {
                     isKingInDanger = true;
                 }
@@ -216,15 +91,15 @@ namespace ChessGame.Business
         }
         private void SetKingsDangerZones(PlayerType kingOwnership, bool isGameOverControl = false)
         {
-            var king = GetKing(kingOwnership);
+            var king = Board.GetKing(kingOwnership);
             king.DangerZones = new HashSet<Block>();
 
-            foreach (var piece in Board.Values)
+            foreach (var piece in Board.Current.Values)
             {
                 if (piece != null && piece.Ownership == GetOtherPlayerType(kingOwnership))
                 {
-                    var from = GetPieceLocation(piece);
-                    foreach (var to in Board.Keys)
+                    var from = Board.FindPieceLocation(piece);
+                    foreach (var to in Board.Current.Keys)
                     {
                         if (!king.DangerZones.Contains(to))
                         {
@@ -244,7 +119,7 @@ namespace ChessGame.Business
                 }
             }
 
-            king.IsChecked = king.DangerZones.Contains(GetPieceLocation(king));
+            king.IsChecked = king.DangerZones.Contains(Board.FindPieceLocation(king));
             if (king.IsChecked)
             {
                 if (!isGameOverControl)
@@ -255,36 +130,8 @@ namespace ChessGame.Business
         }
         public void UpgradePawn(BasePiece piece, Block to)
         {
-            var pieceType = piece.GetType();
-            if (pieceType == typeof(Pawn) && ((Pawn)piece).IsUpgradeAvailable(to))
-            {
-                var upgradedPieceTypes = Enum.GetValues(typeof(UpgradedPieceType)).Cast<UpgradedPieceType>();
-                Console.WriteLine("Which to upgrade?");
-                foreach (var type in upgradedPieceTypes)
-                {
-                    Console.WriteLine($"{(int)type}. {type.ToString()}");
-                }
-                var enteredValue = Console.ReadLine();
-                bool isParsed = int.TryParse(enteredValue, out int pieceIndex);
-                if (isParsed)
-                {
-                    var upgradedPieceType = (UpgradedPieceType)pieceIndex;
-                    var upgradedPiece = (BasePiece)upgradedPieceType.ToString().CreateClass();
-                    upgradedPiece.Ownership = piece.Ownership;
-                    Board[to] = upgradedPiece;
-                }
-            }
-
-
-        }
-        public Block GetPieceLocation(BasePiece piece)
-        {
-            return Board.FirstOrDefault(x => x.Value != null && x.Value.Id.Equals(piece.Id)).Key;
-        }
-
-        public King GetKing(PlayerType ownership)
-        {
-            return Board.FirstOrDefault(x => x.Value?.Ownership == ownership && x.Value.GetType() == typeof(King)).Value as King;
+            if (piece is Pawn pawn)
+                pawn.Upgrade(to, Board.Current);
         }
 
         private void SwitchPlayer()
@@ -312,14 +159,14 @@ namespace ChessGame.Business
             bool isValidMove = false;
             if (isDangerZonesControl || isGameOverControl || piece?.Ownership == CurrentPlayer.Type)
             {
-                bool isPieceNotMoved = move.From.X == move.To.X && move.From.Y == move.To.Y;
-                isValidMove = !isPieceNotMoved && piece.IsValidMove(move, Board, isDangerZonesControl);
+                var isPieceNotMoved = move.From.X == move.To.X && move.From.Y == move.To.Y;
+                isValidMove = !isPieceNotMoved && piece.IsValidMove(move, Board.Current, isDangerZonesControl);
             }
             return isValidMove;
         }
-        private void CheckKills(Block to, bool isGameOverControl = false)
+        private void AnyPieceKilled(Block to, bool isGameOverControl = false)
         {
-            var killedPiece = Board[to];
+            var killedPiece = Board.FindPiece(to);
             if (killedPiece != null)
             {
                 if (!isGameOverControl)
@@ -328,30 +175,23 @@ namespace ChessGame.Business
                 }
             }
         }
-        private void UpdateBoard(Move move)
+        private bool IsOver(Move move, out GameOverType gameOverType)
         {
-            Board[move.To] = Board[move.From];
-            Board[move.From] = null;
-        }
-
-        private bool IsGameOver(out GameOverType gameOverType)
-        {
-            SaveBoard();
+            Board.TakeSnapshot();
             var otherPlayerType = GetOtherPlayerType(CurrentPlayer.Type);
-            bool isOtherPlayerChecked = IsKingInDanger(GetKing(otherPlayerType), true);
+            bool isOtherPlayerChecked = IsKingInDanger(Board.GetKing(otherPlayerType), true);
             object _lock = new object();
-            for (int i = 0; i < Board.Values.Count; i++)
+            for (int i = 0; i < Board.Current.Values.Count; i++)
             {
-
-                var piece = Board.Values.ElementAt(i);
+                var piece = Board.Current.Values.ElementAt(i);
                 if (piece != null && piece.Ownership == otherPlayerType)
                 {
-                    for (int j = 0; j < Board.Keys.Count; j++)
+                    for (int j = 0; j < Board.Current.Keys.Count; j++)
                     {
-                        var to = Board.Keys.ElementAt(j);
+                        var to = Board.Current.Keys.ElementAt(j);
                         lock (_lock)
                         {
-                            if (Play(piece, to, out var isGameOver, true))
+                            if (Play(move, out var isGameOver, true))
                             {
                                 gameOverType = GameOverType.None;
                                 return false;

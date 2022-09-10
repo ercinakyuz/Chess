@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ChessGame.Business.Piece.Factory;
 
 namespace ChessGame.Business.Piece
 {
@@ -21,9 +22,19 @@ namespace ChessGame.Business.Piece
             {new DistanceRangeKey{OwnerShip = PlayerType.White,IsFirstMove = true }, new[]{2,1} },
             {new DistanceRangeKey{OwnerShip = PlayerType.White,IsFirstMove = false }, new[]{1} },
         };
+        private static readonly UpgradablePieceType[] UpgradablePieceTypes = Enum.GetValues(typeof(UpgradablePieceType)).Cast<UpgradablePieceType>().ToArray();
 
-
-        public bool IsUpgradeAvailable(Block to)
+        public void Upgrade(Block to, Dictionary<Block, BasePiece> board)
+        {
+            if (!IsUpgradeAvailable(to))
+                return;
+            Console.WriteLine("Which to upgrade?");
+            Array.ForEach(UpgradablePieceTypes, type => Console.WriteLine($"{(int)type}.{type}"));
+            var upgradedPiece = UpgradablePieceFactory.Create(Console.ReadLine());
+            upgradedPiece.Ownership = Ownership;
+            board[to] = upgradedPiece;
+        }
+        private bool IsUpgradeAvailable(Block to)
         {
             bool isUpgraded = false;
             if (Ownership == PlayerType.White && to.Y == 8)

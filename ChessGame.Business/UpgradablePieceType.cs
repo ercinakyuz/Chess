@@ -1,10 +1,10 @@
 ﻿namespace ChessGame.Business
 {
-    public enum UpgradedPieceType
+    public enum UpgradablePieceType
     {
         Queen = 1,
         Rook = 2,
         Bishop = 3,
-        Knight = 4,
+        Knight = 4
     }
 }
